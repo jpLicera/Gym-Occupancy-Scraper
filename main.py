@@ -12,8 +12,8 @@ RESERVATION_URL = os.getenv("RESERVATION_URL")
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
-def scrape_and_log_occupancy():
 
+def scrape_and_log_occupancy():
     # Start a session to persist cookies across requests
     with requests.Session() as session:
         login_page = session.get(LOGIN_URL)
@@ -45,32 +45,41 @@ def scrape_and_log_occupancy():
         # Get the "reservations" page
         response = session.get(RESERVATION_URL)
 
-        # Get the occupancy data
-        soup = BeautifulSoup(response.text, 'html.parser')
-        reservation_entries = []
-        for block in soup.select('.row.booking-by-date'):
-            timeElement = block.select_one('.col.s2.m1 b')
+        reservation_records = extract_reservation_records(response)
+        persist_reservation_records(reservation_records)
 
-            if not timeElement:
+
+def extract_reservation_records(response):
+    soup = BeautifulSoup(response.text, 'html.parser')
+    reservation_entries = []
+    for block in soup.select('.row.booking-by-date'):
+        time_element = block.select_one('.col.s2.m1 b')
+
+        if not time_element:
+            continue
+        time = time_element.text.strip()
+        details = block.select('.clearfix small:last-of-type')
+
+        if not details:
+            continue
+
+        occupancy = "None"
+
+        for detail in details:
+            if not detail or not detail.text:
                 continue
-            time = timeElement.text.strip()
-            details = block.select('.clearfix small:last-of-type')
+            occupancy = detail.text.strip()
 
-            if not details:
-                continue
+        reservation_entries.append(f"{time}: {occupancy}")
 
-            for detail in details:
-                if not detail or not detail.text:
-                    continue
-                occupancy = detail.text.strip()
+    return reservation_entries
 
-            reservation_entries.append(f"{time}: {occupancy}")
 
-        # Persist the results
-        with open('gym_occupancy_log.txt', 'a', encoding='utf-8') as file:
-            file.write(f"\n{datetime.now()}\n")
-            for entry in reservation_entries:
-                file.write(entry + "\n")
+def persist_reservation_records(records):
+    with open('gym_occupancy_log.txt', 'a', encoding='utf-8') as file:
+        file.write(f"\n{datetime.now()}\n")
+        for entry in records:
+            file.write(entry + "\n")
 
 
 scrape_and_log_occupancy()
