@@ -11,6 +11,7 @@ LOGIN_URL = os.getenv("LOGIN_URL")
 RESERVATION_URL = os.getenv("RESERVATION_URL")
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
+ACTIVITY_NAME = os.getenv("ACTIVITY_NAME")
 
 
 def scrape_and_log_occupancy():
@@ -53,6 +54,13 @@ def extract_reservation_records(response):
     soup = BeautifulSoup(response.text, 'html.parser')
     reservation_entries = []
     for block in soup.select('.row.booking-by-date'):
+        test = block.select_one('.new.badge.left')
+
+        if test:
+            activity = test.get("data-badge-caption")
+            if activity != ACTIVITY_NAME:
+                continue
+
         time_element = block.select_one('.col.s2.m1 b')
 
         if not time_element:
