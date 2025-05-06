@@ -1,4 +1,5 @@
 import json
+import re
 import os
 import requests
 from bs4 import BeautifulSoup
@@ -64,7 +65,6 @@ def process_response(response):
             "date": date,
             "time_slots": time_slots
         })
-        # entries.append(f"{time_slots}")
 
     return entries
 
@@ -79,10 +79,11 @@ def extract_date(date_block):
 def extract_reservation_records(date_block):
     reservation_entries = []
     for block in date_block.select('.row.booking-by-date'):
-        test = block.select_one('.new.badge.left')
 
-        if test:
-            activity = test.get("data-badge-caption")
+        badge_element = block.select_one('.new.badge.left')
+
+        if badge_element:
+            activity = badge_element.get("data-badge-caption")
             if activity != ACTIVITY_NAME:
                 continue
 
@@ -91,19 +92,20 @@ def extract_reservation_records(date_block):
         if not time_element:
             continue
         time = time_element.text.strip()
-        details = block.select('.clearfix small:last-of-type')
+        detail_element = block.select_one('.clearfix small:last-of-type')
 
-        if not details:
+        if not detail_element or not detail_element.text:
             continue
 
-        occupancy = "None"
+        match = re.search(r"\w+:\s*(\d+)\s+de\s+(\d+)", detail_element.text.strip())
 
-        for detail in details:
-            if not detail or not detail.text:
-                continue
-            occupancy = detail.text.strip()
+        entry = {
+            "time": time,
+            "occupancy": match.group(1),
+            "maximum": match.group(2)
+        }
 
-        reservation_entries.append(f"{time}: {occupancy}")
+        reservation_entries.append(entry)
 
     return reservation_entries
 
