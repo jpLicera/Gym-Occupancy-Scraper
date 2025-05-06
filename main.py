@@ -62,6 +62,7 @@ def process_response(response):
 
         time_slots = extract_reservation_records(date_block)
         entries.append({
+            "registered_on": datetime.now().isoformat(),
             "date": date,
             "time_slots": time_slots
         })
