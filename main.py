@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 from bs4 import BeautifulSoup
@@ -46,14 +47,38 @@ def scrape_and_log_occupancy():
         # Get the "reservations" page
         response = session.get(RESERVATION_URL)
 
-        reservation_records = extract_reservation_records(response)
+        reservation_records = process_response(response)
         persist_reservation_records(reservation_records)
 
 
-def extract_reservation_records(response):
+def process_response(response):
     soup = BeautifulSoup(response.text, 'html.parser')
+    entries = []
+    for date_block in soup.select('.booking-date-container'):
+        date = extract_date(date_block)
+        if not date:
+            continue
+
+        time_slots = extract_reservation_records(date_block)
+        entries.append({
+            "date": date,
+            "time_slots": time_slots
+        })
+        # entries.append(f"{time_slots}")
+
+    return entries
+
+
+def extract_date(date_block):
+    date_element = date_block.select_one(".row.booking-by-date.grey.darken-4.white-text")
+    if not date_element:
+        return None
+    return date_element.text.strip()
+
+
+def extract_reservation_records(date_block):
     reservation_entries = []
-    for block in soup.select('.row.booking-by-date'):
+    for block in date_block.select('.row.booking-by-date'):
         test = block.select_one('.new.badge.left')
 
         if test:
@@ -84,10 +109,8 @@ def extract_reservation_records(response):
 
 
 def persist_reservation_records(records):
-    with open('gym_occupancy_log.txt', 'a', encoding='utf-8') as file:
-        file.write(f"\n{datetime.now()}\n")
-        for entry in records:
-            file.write(entry + "\n")
+    with open('gym_occupancy_log.json', 'a', encoding='utf-8') as file:
+        file.write(f"\n{json.dumps(records)}\n")
 
 
 scrape_and_log_occupancy()
