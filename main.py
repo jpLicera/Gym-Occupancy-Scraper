@@ -60,9 +60,10 @@ def process_response(response):
         if not date:
             continue
 
-        time_slots = extract_reservation_records(date_block)
+        time_slots = extract_time_slots(date_block)
         entries.append({
-            "registered_on": datetime.now().isoformat(),
+            "scrapped_on": datetime.now().isoformat(),
+            "activity": ACTIVITY_NAME,
             "date": date,
             "time_slots": time_slots
         })
@@ -77,15 +78,15 @@ def extract_date(date_block):
     return date_element.text.strip()
 
 
-def extract_reservation_records(date_block):
-    reservation_entries = []
+def extract_time_slots(date_block):
+    time_slots = []
     for block in date_block.select('.row.booking-by-date'):
 
         badge_element = block.select_one('.new.badge.left')
 
         if badge_element:
             activity = badge_element.get("data-badge-caption")
-            if activity != ACTIVITY_NAME:
+            if activity.lower() != ACTIVITY_NAME.lower():
                 continue
 
         time_element = block.select_one('.col.s2.m1 b')
@@ -100,15 +101,15 @@ def extract_reservation_records(date_block):
 
         match = re.search(r"\w+:\s*(\d+)\s+de\s+(\d+)", detail_element.text.strip())
 
-        entry = {
+        time_slot = {
             "time": time,
             "occupancy": match.group(1),
-            "maximum": match.group(2)
+            "maximum_occupancy": match.group(2)
         }
 
-        reservation_entries.append(entry)
+        time_slots.append(time_slot)
 
-    return reservation_entries
+    return time_slots
 
 
 def persist_reservation_records(records):
