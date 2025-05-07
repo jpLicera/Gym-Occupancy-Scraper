@@ -60,11 +60,16 @@ def process_response(response):
         if not date:
             continue
 
+        day_of_week = extract_day_of_week(date_block)
+        if not day_of_week:
+            continue
+
         time_slots = extract_time_slots(date_block)
         entries.append({
             "scrapped_on": datetime.now().isoformat(),
             "activity": ACTIVITY_NAME,
             "date": date,
+            "day_of_week": day_of_week,
             "time_slots": time_slots
         })
 
@@ -75,7 +80,49 @@ def extract_date(date_block):
     date_element = date_block.select_one(".row.booking-by-date.grey.darken-4.white-text")
     if not date_element:
         return None
-    return date_element.text.strip()
+
+    matches = re.search(r"(\d+).+?(\d+)", date_block.text.strip())
+
+    if not matches:
+        return None
+
+    day_number = matches.group(1)
+
+    month_name = re.search(r"(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre)", date_block.text.strip())
+
+    if not month_name:
+        return None
+
+    month_number = convert_month_name_to_number(month_name.group(1))
+    year_number = matches.group(2)
+
+
+    return f"{year_number}-{month_number}-{day_number.zfill(2)}"
+
+
+def convert_month_name_to_number(word):
+    word_to_month_number_dict = {
+        "enero": "01",
+        "febrero": "02",
+        "marzo": "03",
+        "abril": "04",
+        "mayo": "05",
+        "junio": "06",
+        "julio": "07",
+        "agosto": "08",
+        "septiembre": "09",
+    }
+    return word_to_month_number_dict.get(word)
+
+
+def extract_day_of_week(date_block):
+    date_element = date_block.select_one(".row.booking-by-date.grey.darken-4.white-text")
+    if not date_element:
+        return None
+
+    match = re.search(r"(\w+),", date_block.text.strip())
+
+    return match.group(1).strip() if match else None
 
 
 def extract_time_slots(date_block):
