@@ -60,16 +60,11 @@ def process_response(response):
         if not date:
             continue
 
-        day_of_week = extract_day_of_week(date_block)
-        if not day_of_week:
-            continue
-
         time_slots = extract_time_slots(date_block)
         entries.append({
             "scrapped_on": datetime.now().isoformat(),
             "activity": ACTIVITY_NAME,
             "date": date,
-            "day_of_week": day_of_week,
             "time_slots": time_slots
         })
 
@@ -113,16 +108,6 @@ def convert_month_name_to_number(word):
         "septiembre": "09",
     }
     return word_to_month_number_dict.get(word)
-
-
-def extract_day_of_week(date_block):
-    date_element = date_block.select_one(".row.booking-by-date.grey.darken-4.white-text")
-    if not date_element:
-        return None
-
-    match = re.search(r"(\w+),", date_block.text.strip())
-
-    return match.group(1).strip() if match else None
 
 
 def extract_time_slots(date_block):
