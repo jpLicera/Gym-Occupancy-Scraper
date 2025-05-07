@@ -12,7 +12,7 @@ LOGIN_URL=https://placeholder.com/authentication
 RESERVATION_URL=https://placeholder.com/reservations
 EMAIL=example@gmail.com
 PASSWORD=123456789
-ACTIVITY_NAME=Zumba
+ACTIVITY_NAME=Pilates
 ```
 
 Executing the `run` script produces the following result:
@@ -20,111 +20,134 @@ Executing the `run` script produces the following result:
 ```json
 [
   {
-    "registered_on": "2025-05-06T18:07:06.892061",
-    "date": "2025-05-06",
+    "scrapped_on": "2025-05-07T14:23:22.816784",
+    "activity": "Pilates",
+    "date": "2025-05-07",
     "time_slots": [
       {
+        "time": "14:00",
+        "occupancy": "54",
+        "maximum_occupancy": "140"
+      },
+      {
+        "time": "15:00",
+        "occupancy": "6",
+        "maximum_occupancy": "140"
+      },
+      {
+        "time": "16:00",
+        "occupancy": "3",
+        "maximum_occupancy": "140"
+      },
+      {
+        "time": "17:00",
+        "occupancy": "2",
+        "maximum_occupancy": "140"
+      },
+      {
         "time": "18:00",
-        "occupancy": "61",
-        "maximum": "140"
+        "occupancy": "2",
+        "maximum_occupancy": "140"
       },
       {
         "time": "19:00",
-        "occupancy": "13",
-        "maximum": "140"
+        "occupancy": "2",
+        "maximum_occupancy": "140"
       },
       {
         "time": "20:00",
-        "occupancy": "6",
-        "maximum": "140"
+        "occupancy": "3",
+        "maximum_occupancy": "140"
       },
       {
         "time": "21:00",
-        "occupancy": "0",
-        "maximum": "140"
+        "occupancy": "1",
+        "maximum_occupancy": "140"
       }
     ]
   },
   {
-    "registered_on": "2025-05-06T18:07:06.895061",
-    "date": "2025-05-07",
+    "scrapped_on": "2025-05-07T14:23:22.816784",
+    "activity": "Pilates",
+    "date": "2025-05-08",
     "time_slots": [
       {
         "time": "07:00",
-        "occupancy": "3",
-        "maximum": "140"
+        "occupancy": "4",
+        "maximum_occupancy": "140"
       },
       {
         "time": "08:00",
-        "occupancy": "2",
-        "maximum": "140"
+        "occupancy": "1",
+        "maximum_occupancy": "140"
       },
       {
         "time": "09:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "10:00",
-        "occupancy": "1",
-        "maximum": "140"
+        "occupancy": "0",
+        "maximum_occupancy": "140"
       },
       {
         "time": "11:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "12:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "13:00",
         "occupancy": "1",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "14:00",
         "occupancy": "1",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "15:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "16:00",
-        "occupancy": "0",
-        "maximum": "140"
+        "occupancy": "1",
+        "maximum_occupancy": "140"
       },
       {
         "time": "17:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "18:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "19:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "20:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       },
       {
         "time": "21:00",
         "occupancy": "0",
-        "maximum": "140"
+        "maximum_occupancy": "140"
       }
     ]
   }
 ]
+
 ```
